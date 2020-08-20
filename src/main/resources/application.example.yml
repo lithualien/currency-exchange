@@ -1,0 +1,17 @@
+# SERVER CONFIGURATION
+server:
+  port: 5000
+
+# SPRING CONFIGURATION
+spring:
+  datasource:
+    url: foo_url
+    username: foo_username
+    password: foo_password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+  jackson:
+    date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
