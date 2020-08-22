@@ -16,11 +16,11 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@XmlRootElement(name = "CcyTbl", namespace = "http://www.lb.lt/WebServices/FxRates")
+@XmlRootElement(name = "FxRates", namespace = "http://www.lb.lt/WebServices/FxRates")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CurrencyNameCommand {
+public class LBCurrencyRateCommand {
 
-    @XmlElement(name = "CcyNtry")
-    private Set<CurrencyNameDataCommand> currencyNameDataCommands = new HashSet<>();
+    @XmlElement(name = "FxRate")
+    private Set<LBCurrencyRateDataCommand> LBCurrencyRateDataCommands = new HashSet<>();
 
 }

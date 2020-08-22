@@ -12,8 +12,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,7 +21,7 @@ import java.util.Set;
 @AllArgsConstructor
 @XmlRootElement(name = "FxRate", namespace = "http://www.lb.lt/WebServices/FxRates")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CurrencyRateDataCommand {
+public class LBCurrencyRateDataCommand {
 
 
     @XmlElement(name = "Dt")
@@ -29,6 +29,6 @@ public class CurrencyRateDataCommand {
     private LocalDate localDate;
 
     @XmlElement(name = "CcyAmt")
-    private Set<CurrencyValueCommand> currencyValueCommands = new HashSet<>();
+    private List<LBCurrencyValueCommand> LBCurrencyValueCommands = new ArrayList<>();
 
 }

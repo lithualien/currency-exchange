@@ -1,11 +1,14 @@
 package com.github.lithualien.currencyexchanger.repositories;
 
+import com.github.lithualien.currencyexchanger.domains.CurrencyName;
 import com.github.lithualien.currencyexchanger.domains.CurrencyRate;
-import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.CrudRepository;
+
+import java.time.LocalDate;
 
 @org.springframework.stereotype.Repository
-public interface CurrencyRateRepository extends Repository<CurrencyRate, Long> {
+public interface CurrencyRateRepository extends CrudRepository<CurrencyRate, Long> {
 
-
+    boolean existsByCurrencyNameAndDate(CurrencyName currencyName, LocalDate localDate);
 
 }

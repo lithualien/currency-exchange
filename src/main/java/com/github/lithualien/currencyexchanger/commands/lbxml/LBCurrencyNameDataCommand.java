@@ -9,18 +9,21 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@XmlRootElement(name = "FxRates", namespace = "http://www.lb.lt/WebServices/FxRates")
+@XmlRootElement(name = "CcyNtry")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CurrencyRateCommand {
+public class LBCurrencyNameDataCommand {
 
-    @XmlElement(name = "FxRate")
-    private Set<CurrencyRateDataCommand> currencyRateDataCommands = new HashSet<>();
+    @XmlElement(name = "Ccy")
+    private String name;
+
+    @XmlElement(name = "CcyNm")
+    private List<LBLanguageCommand> LBLanguageCommands = new ArrayList<>();
 
 }

@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.*;
 @AllArgsConstructor
 @XmlRootElement(name = "CcyNm")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LanguageCommand {
+public class LBLanguageCommand {
 
     @XmlAttribute(name = "lang")
     private String language;

@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -17,12 +18,26 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @XmlRootElement(name = "CcyAmt")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CurrencyValueCommand {
+public class LBCurrencyValueCommand {
 
     @XmlElement(name = "Ccy")
     private String name;
 
     @XmlElement(name = "Amt")
     private BigDecimal value;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LBCurrencyValueCommand that = (LBCurrencyValueCommand) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, value);
+    }
 
 }
