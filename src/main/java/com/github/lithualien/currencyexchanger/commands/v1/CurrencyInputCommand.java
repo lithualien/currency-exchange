@@ -15,9 +15,9 @@ import java.io.Serializable;
 public class CurrencyInputCommand implements Serializable {
 
     @JsonProperty("from_currency")
-    private String fromCurrency;
+    private Long fromCurrency;
 
     @JsonProperty("to_currency")
-    private String toCurrency;
+    private Long toCurrency;
 
 }

@@ -1,6 +1,8 @@
 package com.github.lithualien.currencyexchanger.services.impl;
 
 import com.github.lithualien.currencyexchanger.commands.lbxml.LBCurrencyValueCommand;
+import com.github.lithualien.currencyexchanger.commands.v1.CurrencyInputCommand;
+import com.github.lithualien.currencyexchanger.commands.v1.CurrencyOutputCommand;
 import com.github.lithualien.currencyexchanger.converters.LBCurrencyValueCommandToCurrencyRate;
 import com.github.lithualien.currencyexchanger.domains.CurrencyName;
 import com.github.lithualien.currencyexchanger.domains.CurrencyRate;
@@ -11,6 +13,8 @@ import com.github.lithualien.currencyexchanger.services.CurrencyRateService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 
 @Service
@@ -25,6 +29,16 @@ public class CurrencyRateServiceImpl implements CurrencyRateService {
         this.repository = repository;
         this.converter = converter;
         this.currencyNameService = currencyNameService;
+    }
+
+    @Override
+    public CurrencyOutputCommand getCurrencyValue(CurrencyInputCommand currencyInputCommand) {
+        CurrencyRate from = getCurrencyRateByCurrencyNameId(currencyInputCommand.getFromCurrency());
+        CurrencyRate to = getCurrencyRateByCurrencyNameId(currencyInputCommand.getToCurrency());
+
+        BigDecimal value = to.getRate().divide(from.getRate(), 5, RoundingMode.HALF_DOWN);
+
+        return new CurrencyOutputCommand(value);
     }
 
     @Transactional
@@ -47,6 +61,16 @@ public class CurrencyRateServiceImpl implements CurrencyRateService {
         CurrencyRate currencyRate = converter.convert(valueCommand, currencyName, date);
 
         repository.save(currencyRate);
-
     }
+
+    private CurrencyRate getCurrencyRateByCurrencyNameId(Long id) {
+        String message = "Currency rate with id=" + id + " was not found.";
+
+        return repository
+                .findByCurrencyNameIdOrderByDateDesc(id)
+                .<ResourceNotFoundException>orElseThrow(() -> {
+                    throw new ResourceNotFoundException(message);
+                });
+    }
+
 }
