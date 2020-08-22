@@ -10,6 +10,7 @@ import com.github.lithualien.currencyexchanger.exceptions.ResourceNotFoundExcept
 import com.github.lithualien.currencyexchanger.repositories.CurrencyRateRepository;
 import com.github.lithualien.currencyexchanger.services.CurrencyNameService;
 import com.github.lithualien.currencyexchanger.services.CurrencyRateService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 
+@Log4j2
 @Service
 public class CurrencyRateServiceImpl implements CurrencyRateService {
 
@@ -35,8 +37,10 @@ public class CurrencyRateServiceImpl implements CurrencyRateService {
     public CurrencyOutputCommand getCurrencyValue(CurrencyInputCommand currencyInputCommand) {
         CurrencyRate from = getCurrencyRateByCurrencyNameId(currencyInputCommand.getFromCurrency());
         CurrencyRate to = getCurrencyRateByCurrencyNameId(currencyInputCommand.getToCurrency());
-
         BigDecimal value = to.getRate().divide(from.getRate(), 5, RoundingMode.HALF_DOWN);
+
+        log.info("Converting from " + from.getCurrencyName().getCurrencyCode()
+                + " to " + to.getCurrencyName().getCurrencyCode() + ", value = " + value);
 
         return new CurrencyOutputCommand(value);
     }
@@ -48,7 +52,7 @@ public class CurrencyRateServiceImpl implements CurrencyRateService {
         CurrencyName currencyName;
 
         try {
-            currencyName = currencyNameService.getCurrencyNameByCode(valueCommand.getName());
+            currencyName = currencyNameService.getCurrencyNameByCode(valueCommand.getCode());
         }
         catch (ResourceNotFoundException ex) {
             throw new ResourceNotFoundException("New currency found");
@@ -67,7 +71,7 @@ public class CurrencyRateServiceImpl implements CurrencyRateService {
         String message = "Currency rate with id=" + id + " was not found.";
 
         return repository
-                .findByCurrencyNameIdOrderByDateDesc(id)
+                .findFirstByCurrencyNameIdOrderByDateDesc(id)
                 .<ResourceNotFoundException>orElseThrow(() -> {
                     throw new ResourceNotFoundException(message);
                 });

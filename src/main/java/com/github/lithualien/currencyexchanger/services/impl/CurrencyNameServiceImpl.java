@@ -2,7 +2,7 @@ package com.github.lithualien.currencyexchanger.services.impl;
 
 import com.github.lithualien.currencyexchanger.commands.lbxml.LBCurrencyNameDataCommand;
 import com.github.lithualien.currencyexchanger.commands.v1.CurrencyCommand;
-import com.github.lithualien.currencyexchanger.converters.CurrencyRateToCurrencyCommand;
+import com.github.lithualien.currencyexchanger.converters.CurrencyNameToCurrencyCommand;
 import com.github.lithualien.currencyexchanger.converters.LBCurrencyNameDataCommandToCurrencyName;
 import com.github.lithualien.currencyexchanger.domains.CurrencyName;
 import com.github.lithualien.currencyexchanger.exceptions.ResourceNotFoundException;
@@ -20,10 +20,10 @@ public class CurrencyNameServiceImpl implements CurrencyNameService {
 
     private final CurrencyNameRepository repository;
     private final LBCurrencyNameDataCommandToCurrencyName converter;
-    private final CurrencyRateToCurrencyCommand currencyCommandConverter;
+    private final CurrencyNameToCurrencyCommand currencyCommandConverter;
 
     public CurrencyNameServiceImpl(LBCurrencyNameDataCommandToCurrencyName converter,
-                                   CurrencyRateToCurrencyCommand currencyCommandConverter,
+                                   CurrencyNameToCurrencyCommand currencyCommandConverter,
                                    CurrencyNameRepository repository) {
         this.repository = repository;
         this.converter = converter;
@@ -45,11 +45,11 @@ public class CurrencyNameServiceImpl implements CurrencyNameService {
         return getCurrencyCommands(repository.findAllByDate(LocalDate.now()));
     }
 
-    private List<CurrencyCommand> getCurrencyCommands(List<CurrencyName> currencyRates) {
+    private List<CurrencyCommand> getCurrencyCommands(List<CurrencyName> currencyNames) {
 
         List<CurrencyCommand> currencyCommands = new ArrayList<>();
 
-        currencyRates.forEach(rate -> {
+        currencyNames.forEach(rate -> {
             CurrencyCommand currencyCommand = currencyCommandConverter.convert(rate);
             currencyCommands.add(currencyCommand);
         });
@@ -61,7 +61,7 @@ public class CurrencyNameServiceImpl implements CurrencyNameService {
     @Override
     public void save(LBCurrencyNameDataCommand nameDataCommand) {
 
-        if (repository.existsByCurrencyCode(nameDataCommand.getName())) {
+        if (repository.existsByCurrencyCode(nameDataCommand.getCode())) {
             return;
         }
 

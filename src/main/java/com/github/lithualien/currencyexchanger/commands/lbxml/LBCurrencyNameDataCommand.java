@@ -21,9 +21,9 @@ import java.util.List;
 public class LBCurrencyNameDataCommand {
 
     @XmlElement(name = "Ccy")
-    private String name;
+    private String code;
 
     @XmlElement(name = "CcyNm")
-    private List<LBLanguageCommand> LBLanguageCommands = new ArrayList<>();
+    private List<LBLanguageCommand> lbLanguageCommands = new ArrayList<>();
 
 }

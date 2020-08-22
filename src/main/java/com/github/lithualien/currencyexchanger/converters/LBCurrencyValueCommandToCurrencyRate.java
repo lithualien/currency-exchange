@@ -12,11 +12,16 @@ public class LBCurrencyValueCommandToCurrencyRate {
 
     public CurrencyRate convert(LBCurrencyValueCommand source, CurrencyName currencyName, LocalDate date) {
 
+        if(source == null) {
+            return null;
+        }
+
         CurrencyRate currencyRate = new CurrencyRate();
 
         currencyRate.setDate(date);
         currencyRate.setRate(source.getValue());
         currencyRate.setCurrencyName(currencyName);
+
         return currencyRate;
     }
 

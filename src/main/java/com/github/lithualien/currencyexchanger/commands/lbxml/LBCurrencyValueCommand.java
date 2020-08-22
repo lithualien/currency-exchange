@@ -21,7 +21,7 @@ import java.util.Objects;
 public class LBCurrencyValueCommand {
 
     @XmlElement(name = "Ccy")
-    private String name;
+    private String code;
 
     @XmlElement(name = "Amt")
     private BigDecimal value;
@@ -31,13 +31,13 @@ public class LBCurrencyValueCommand {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LBCurrencyValueCommand that = (LBCurrencyValueCommand) o;
-        return Objects.equals(name, that.name) &&
+        return Objects.equals(code, that.code) &&
                 Objects.equals(value, that.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, value);
+        return Objects.hash(code, value);
     }
 
 }

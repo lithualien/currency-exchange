@@ -1,13 +1,18 @@
 package com.github.lithualien.currencyexchanger.controllers;
 
+import com.github.lithualien.currencyexchanger.commands.v1.CurrencyCommand;
 import com.github.lithualien.currencyexchanger.commands.v1.CurrencyInputCommand;
 import com.github.lithualien.currencyexchanger.commands.v1.CurrencyOutputCommand;
 import com.github.lithualien.currencyexchanger.services.CurrencyNameService;
 import com.github.lithualien.currencyexchanger.services.CurrencyRateService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@Log4j2
 @RestController
 @RequestMapping("api/currencies/v1")
 public class CurrencyController {
@@ -22,12 +27,15 @@ public class CurrencyController {
 
     @GetMapping
     public ResponseEntity<?> getCurrencies() {
-        return new ResponseEntity<>(currencyNameService.getCurrencies(), HttpStatus.OK);
+        List<CurrencyCommand> currencyNames = currencyNameService.getCurrencies();
+        log.info("Fetched list of currencies");
+        return new ResponseEntity<>(currencyNames, HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<CurrencyOutputCommand> getCurrencyPrice(@RequestBody CurrencyInputCommand input) {
-        return new ResponseEntity<>(currencyRateService.getCurrencyValue(input), HttpStatus.OK);
+        CurrencyOutputCommand currencyOutputCommand = currencyRateService.getCurrencyValue(input);
+        return new ResponseEntity<>(currencyOutputCommand, HttpStatus.OK);
     }
 
 }

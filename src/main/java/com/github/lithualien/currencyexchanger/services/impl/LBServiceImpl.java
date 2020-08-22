@@ -53,7 +53,7 @@ public class LBServiceImpl implements LBService {
         log.info("Updated currency name list");
     }
 
-    @Scheduled(cron = "0 0 12 * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     @Override
     public void addCurrencyRates() {
         LocalDate localDate = LocalDate.now();
