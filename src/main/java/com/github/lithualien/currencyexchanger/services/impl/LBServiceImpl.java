@@ -18,6 +18,7 @@ import reactor.core.publisher.Flux;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -93,7 +94,7 @@ public class LBServiceImpl implements LBService {
                         .forEach(data1 -> valueCommands.addAll(data1.getLBCurrencyValueCommands()))
                 );
 
-        return List.copyOf(valueCommands);
+        return new ArrayList<>(valueCommands);
     }
 
     private Set<LBCurrencyNameDataCommand> getNameDataCommands(Flux<LBCurrencyNameCommand> data) {
