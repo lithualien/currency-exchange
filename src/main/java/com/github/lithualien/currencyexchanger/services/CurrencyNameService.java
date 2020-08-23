@@ -11,6 +11,6 @@ public interface CurrencyNameService {
     List<CurrencyCommand> getCurrencies();
     CurrencyName getCurrencyNameByCode(String currencyName);
 
-    void save(LBCurrencyNameDataCommand nameDataCommand);
+    CurrencyName save(LBCurrencyNameDataCommand nameDataCommand);
 
 }

@@ -59,16 +59,16 @@ public class CurrencyNameServiceImpl implements CurrencyNameService {
 
     @Transactional
     @Override
-    public void save(LBCurrencyNameDataCommand nameDataCommand) {
+    public CurrencyName save(LBCurrencyNameDataCommand nameDataCommand) {
 
-        if (repository.existsByCurrencyCode(nameDataCommand.getCode())) {
-            return;
+        if (!repository.existsByCurrencyCode(nameDataCommand.getCode())) {
+
+            CurrencyName currencyName = converter.convert(nameDataCommand);
+
+            return repository.save(currencyName);
+
         }
 
-        CurrencyName currencyName = converter.convert(nameDataCommand);
-
-        if (currencyName != null) {
-            repository.save(currencyName);
-        }
+        return null;
     }
 }

@@ -47,7 +47,7 @@ public class CurrencyRateServiceImpl implements CurrencyRateService {
 
     @Transactional
     @Override
-    public void save(LBCurrencyValueCommand valueCommand, LocalDate date) throws ResourceNotFoundException {
+    public CurrencyRate save(LBCurrencyValueCommand valueCommand, LocalDate date) throws ResourceNotFoundException {
 
         CurrencyName currencyName;
 
@@ -59,12 +59,12 @@ public class CurrencyRateServiceImpl implements CurrencyRateService {
         }
 
         if(repository.existsByCurrencyNameAndDate(currencyName, date)) {
-            return;
+            return null;
         }
 
         CurrencyRate currencyRate = converter.convert(valueCommand, currencyName, date);
 
-        repository.save(currencyRate);
+        return repository.save(currencyRate);
     }
 
     private CurrencyRate getCurrencyRateByCurrencyNameId(Long id) {
@@ -73,6 +73,7 @@ public class CurrencyRateServiceImpl implements CurrencyRateService {
         return repository
                 .findFirstByCurrencyNameIdOrderByDateDesc(id)
                 .<ResourceNotFoundException>orElseThrow(() -> {
+                    log.error("Tried to get non existing currency id= " + id);
                     throw new ResourceNotFoundException(message);
                 });
     }

@@ -11,15 +11,10 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CurrencyCommand implements Serializable, Comparable<CurrencyCommand> {
+public class CurrencyCommand implements Serializable {
 
     private Long id;
     private String code;
     private String description;
-
-    @Override
-    public int compareTo(CurrencyCommand currencyCommand) {
-        return code.compareTo(currencyCommand.getCode());
-    }
 
 }
