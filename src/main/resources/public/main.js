@@ -259,9 +259,9 @@ class CurrencyExchangerComponent {
             }
         };
         this.onChangeToCurrency = (toInput) => {
-            if ((this.isFromAndToWithData()) && (toInput != null) && (this.rate.currency_value != null)) {
-                this.input = toInput;
-                this.result = (this.input * this.rate.currency_value).toPrecision(6);
+            this.input = toInput;
+            if ((this.isFromAndToWithData()) && (toInput != null)) {
+                this.result = this.calculateCurrencyResult(this.rate);
             }
             else {
                 this.result = 0.00000 + "";
@@ -276,15 +276,20 @@ class CurrencyExchangerComponent {
     mirtiesKelias(values) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             this.currencyService.getCurrencyRate(values).subscribe(data => {
-                this.rate = data;
+                this.rate = data.currency_value;
+                let calcValue = this.calculateCurrencyResult(data.currency_value);
+                if (calcValue == null) {
+                    this.result = "0.00000";
+                }
+                else {
+                    this.result = this.calculateCurrencyResult(data.currency_value);
+                }
             });
         });
     }
     getToday() {
-        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            this.currencyService.getDate().subscribe(data => {
-                this.today = data;
-            });
+        this.currencyService.getDate().subscribe(data => {
+            this.today = data;
         });
     }
     listCurrencies() {
@@ -292,38 +297,35 @@ class CurrencyExchangerComponent {
             this.currencies = data;
         });
     }
-    calculateCurrencyResult() {
-        if ((this.input == null) || (this.rate.currency_value == null)) {
+    calculateCurrencyResult(rate) {
+        console.log(rate + " in calculate currency result");
+        console.log(this.input + " this is the input value");
+        if ((this.input == null)) {
             this.result = "0.00000";
         }
-        this.result = (this.rate.currency_value * this.input).toFixed(5);
+        return (rate * this.input).toFixed(5);
     }
     isFromAndToWithData() {
-        if ((this.from != null) && (this.to != null)) {
-            return true;
-        }
-        return false;
+        return (this.from != null) && (this.to != null);
     }
     checkSafeToGetRates() {
         if ((this.from != null) && (this.to != null)) {
             let values = new _common_currency_convertion__WEBPACK_IMPORTED_MODULE_2__["CurrencyConvertion"](this.from, this.to);
-            console.log("BUVO SAUGU ATNAUJINTI DUOMENIS");
-            console.log(values);
             this.mirtiesKelias(values);
-            console.log(this.rate);
-            this.calculateCurrencyResult();
         }
     }
     numberOnly(event) {
         const charCode = (event.which) ? event.which : event.keyCode;
-        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        if (charCode === 46) {
+            return true;
+        }
+        else if (charCode > 31 && (charCode < 48 || charCode > 57)) {
             return false;
         }
-        return true;
     }
 }
 CurrencyExchangerComponent.ɵfac = function CurrencyExchangerComponent_Factory(t) { return new (t || CurrencyExchangerComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_services_currency_service_service__WEBPACK_IMPORTED_MODULE_3__["CurrencyService"])); };
-CurrencyExchangerComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: CurrencyExchangerComponent, selectors: [["app-currency-exchanger"]], decls: 19, vars: 5, consts: [[1, "row", "justify-content-center"], [1, "col-lg-2", "col-xl-2"], [1, "full-width"], ["matInput", "", "type", "text", "onlyNumber", "", 3, "keypress", "input"], ["bindLabel", "code", "bindValue", "id", "notFoundText", "Valiuta nerasta", "loadingText", "Kraunama", "placeholder", "I\u0161 valiutos", 3, "items", "change"], [1, "col-lg-1", "col-xl-1", "center-image"], ["src", "../../assets/images/equal-sign.png", "alt", "equals-sign", 1, "equals-image"], ["bindLabel", "code", "bindValue", "id", "notFoundText", "Valiuta nerasta", "loadingText", "Kraunama", "placeholder", "\u012E valiut\u0105", 3, "items", "change"], ["matInput", "", 3, "readonly", "value"]], template: function CurrencyExchangerComponent_Template(rf, ctx) { if (rf & 1) {
+CurrencyExchangerComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: CurrencyExchangerComponent, selectors: [["app-currency-exchanger"]], decls: 19, vars: 5, consts: [[1, "row", "justify-content-center"], [1, "col-lg-2", "col-xl-2"], [1, "full-width"], ["matInput", "", "type", "text", 3, "keypress", "input"], ["bindLabel", "code", "bindValue", "id", "notFoundText", "Valiuta nerasta", "loadingText", "Kraunama", "placeholder", "I\u0161 valiutos", 3, "items", "change"], [1, "col-lg-1", "col-xl-1", "center-image"], ["src", "../../assets/images/equal-sign.png", "alt", "equals-sign", 1, "equals-image"], ["bindLabel", "code", "bindValue", "id", "notFoundText", "Valiuta nerasta", "loadingText", "Kraunama", "placeholder", "\u012E valiut\u0105", 3, "items", "change"], ["matInput", "", "id", "currency_value", 3, "readonly", "value"]], template: function CurrencyExchangerComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "h2");
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
@@ -401,7 +403,7 @@ __webpack_require__.r(__webpack_exports__);
 class CurrencyService {
     constructor(http) {
         this.http = http;
-        this.url = "http://localhost:5000/api/currencies/v1";
+        this.url = "http://totaurestapi-env.eba-dfyvcstc.eu-central-1.elasticbeanstalk.com/api/currencies/v1";
     }
     getCurrencyList() {
         return this.http.get(this.url);
