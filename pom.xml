@@ -99,6 +99,7 @@
                     <workingDirectory>src/main/resources/frontend/currency-exchange</workingDirectory>
                     <arguments>
                         <argument>build</argument>
+                        <argument>--prod</argument>
                     </arguments>
                 </configuration>
             </plugin>

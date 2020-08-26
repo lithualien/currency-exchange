@@ -4,6 +4,7 @@ import com.github.lithualien.currencyexchanger.commands.lbxml.LBCurrencyNameComm
 import com.github.lithualien.currencyexchanger.commands.lbxml.LBCurrencyNameDataCommand;
 import com.github.lithualien.currencyexchanger.commands.lbxml.LBCurrencyRateCommand;
 import com.github.lithualien.currencyexchanger.commands.lbxml.LBCurrencyValueCommand;
+import com.github.lithualien.currencyexchanger.commands.v1.DateCommand;
 import com.github.lithualien.currencyexchanger.exceptions.ResourceNotFoundException;
 import com.github.lithualien.currencyexchanger.services.CurrencyNameService;
 import com.github.lithualien.currencyexchanger.services.CurrencyRateService;
@@ -30,7 +31,7 @@ public class LBServiceImpl implements LBService {
     private final WebClient webClient;
     private final CurrencyNameService currencyNameService;
     private final CurrencyRateService currencyRateService;
-    public static String updateAt;
+    private static String updateAt;
 
     public LBServiceImpl(WebClient webClient, CurrencyNameService currencyNameService, CurrencyRateService currencyRateService) {
         this.webClient = webClient;
@@ -110,6 +111,17 @@ public class LBServiceImpl implements LBService {
     private static void setUpdatedAt() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         updateAt = LocalDateTime.now().format(formatter);
+    }
+
+    public static DateCommand getLocalDateTime() {
+        if (updateAt.isEmpty()) {
+            setUpdatedAt();
+        }
+
+        DateCommand dateCommand = new DateCommand(updateAt);
+        log.info("Fetched date.");
+
+        return dateCommand;
     }
 
 }

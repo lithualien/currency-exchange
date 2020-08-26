@@ -6,12 +6,13 @@ import com.github.lithualien.currencyexchanger.commands.v1.CurrencyOutputCommand
 import com.github.lithualien.currencyexchanger.commands.v1.DateCommand;
 import com.github.lithualien.currencyexchanger.services.CurrencyNameService;
 import com.github.lithualien.currencyexchanger.services.CurrencyRateService;
+import com.github.lithualien.currencyexchanger.services.LBService;
+import com.github.lithualien.currencyexchanger.services.impl.LBServiceImpl;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Log4j2
@@ -22,7 +23,7 @@ public class CurrencyController {
     private final CurrencyRateService currencyRateService;
     private final CurrencyNameService currencyNameService;
 
-    public CurrencyController(CurrencyRateService currencyRateService, CurrencyNameService currencyNameService) {
+    public CurrencyController(CurrencyRateService currencyRateService, CurrencyNameService currencyNameService, LBService lbService) {
         this.currencyRateService = currencyRateService;
         this.currencyNameService = currencyNameService;
     }
@@ -42,9 +43,7 @@ public class CurrencyController {
 
     @GetMapping("/today")
     public ResponseEntity<DateCommand> getDate() {
-        DateCommand dateCommand = new DateCommand(LocalDate.now());
-        log.info("Fetched date.");
-        return new ResponseEntity<>(dateCommand, HttpStatus.OK);
+        return new ResponseEntity<>(LBServiceImpl.getLocalDateTime(), HttpStatus.OK);
     }
 
 }
