@@ -40,7 +40,7 @@ public class LBServiceImpl implements LBService {
     }
 
     @Override
-    public void addCurrencies() {
+    public void addCurrencies(String code) {
 
         Flux<LBCurrencyNameCommand> currencies = webClient.get()
                 .uri("/getCurrencyList?")
@@ -50,9 +50,16 @@ public class LBServiceImpl implements LBService {
 
         Set<LBCurrencyNameDataCommand> nameDataCommands = getNameDataCommands(currencies);
 
-        nameDataCommands.forEach(currencyNameService::save);
+        LBCurrencyNameDataCommand newCurrency = nameDataCommands.stream()
+                .filter(currency -> currency.getCode().equals(code))
+                .findFirst()
+                .orElse(null);
 
-        log.info("Updated currency name list");
+        if (newCurrency != null) {
+            currencyNameService.save(newCurrency);
+
+            log.info("Updated currency name list");
+        }
     }
 
     @Scheduled(cron = "0 0 0 * * ?")
@@ -75,7 +82,7 @@ public class LBServiceImpl implements LBService {
             }
             catch (ResourceNotFoundException ex) {
                 log.info(ex.getMessage());
-                addCurrencies();
+                addCurrencies(valueCommands.get(i).getCode());
                 i--;
             }
         }

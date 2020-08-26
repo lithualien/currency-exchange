@@ -17,6 +17,4 @@ public interface CurrencyNameRepository extends CrudRepository<CurrencyName, Lon
             "ORDER BY name.currencyName.currencyCode ASC")
     List<CurrencyName> findAllByDate(LocalDate localDate);
 
-    Boolean existsByCurrencyCode(String currencyCode);
-
 }

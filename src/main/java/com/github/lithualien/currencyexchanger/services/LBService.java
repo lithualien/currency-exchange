@@ -2,7 +2,7 @@ package com.github.lithualien.currencyexchanger.services;
 
 public interface LBService {
 
-    void addCurrencies();
+    void addCurrencies(String code);
 
     void addCurrencyRates();
 }

@@ -61,12 +61,10 @@ public class CurrencyNameServiceImpl implements CurrencyNameService {
     @Override
     public CurrencyName save(LBCurrencyNameDataCommand nameDataCommand) {
 
-        if (!repository.existsByCurrencyCode(nameDataCommand.getCode())) {
+        CurrencyName currencyName = converter.convert(nameDataCommand);
 
-            CurrencyName currencyName = converter.convert(nameDataCommand);
-
+        if(currencyName != null) {
             return repository.save(currencyName);
-
         }
 
         return null;
