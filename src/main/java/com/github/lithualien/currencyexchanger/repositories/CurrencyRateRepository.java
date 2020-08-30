@@ -2,16 +2,15 @@ package com.github.lithualien.currencyexchanger.repositories;
 
 import com.github.lithualien.currencyexchanger.domains.CurrencyName;
 import com.github.lithualien.currencyexchanger.domains.CurrencyRate;
-import org.springframework.data.repository.CrudRepository;
-
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import reactor.core.publisher.Mono;
 import java.time.LocalDate;
-import java.util.Optional;
 
 @org.springframework.stereotype.Repository
-public interface CurrencyRateRepository extends CrudRepository<CurrencyRate, Long> {
+public interface CurrencyRateRepository extends ReactiveCrudRepository<CurrencyRate, Long> {
 
-    boolean existsByCurrencyNameAndDate(CurrencyName currencyName, LocalDate localDate);
+    Mono<Boolean> existsByCurrencyNameAndDate(CurrencyName currencyName, LocalDate localDate);
 
-    Optional<CurrencyRate> findFirstByCurrencyNameIdOrderByDateDesc(Long currencyNameId);
+    Mono<CurrencyRate> findFirstByCurrencyNameIdOrderByDateDesc(Long currencyNameId);
 
 }
