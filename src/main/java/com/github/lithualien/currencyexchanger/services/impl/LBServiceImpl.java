@@ -1,9 +1,6 @@
 package com.github.lithualien.currencyexchanger.services.impl;
 
-import com.github.lithualien.currencyexchanger.commands.lbxml.LBCurrencyNameCommand;
-import com.github.lithualien.currencyexchanger.commands.lbxml.LBCurrencyNameDataCommand;
-import com.github.lithualien.currencyexchanger.commands.lbxml.LBCurrencyRateCommand;
-import com.github.lithualien.currencyexchanger.commands.lbxml.LBCurrencyValueCommand;
+import com.github.lithualien.currencyexchanger.commands.lbxml.*;
 import com.github.lithualien.currencyexchanger.commands.v1.DateCommand;
 import com.github.lithualien.currencyexchanger.exceptions.ResourceNotFoundException;
 import com.github.lithualien.currencyexchanger.services.CurrencyNameService;
@@ -15,6 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,56 +38,56 @@ public class LBServiceImpl implements LBService {
     }
 
     @Override
-    public void addCurrencies(String code) {
+    public Mono<Void> addCurrencies(String code) {
 
-        Flux<LBCurrencyNameCommand> currencies = webClient.get()
+        Flux<LBCurrencyNameDataCommand> currencyNames = webClient.get()
                 .uri("/getCurrencyList?")
                 .accept(MediaType.TEXT_XML)
                 .retrieve()
-                .bodyToFlux(LBCurrencyNameCommand.class);
+                .bodyToFlux(LBCurrencyNameDataCommand.class);
 
-        Set<LBCurrencyNameDataCommand> nameDataCommands = getNameDataCommands(currencies);
+        currencyNames
+                .filter(names -> names.getCode().equals(code))
+                .take(1)
+                .flatMap(currencyNameService::save);
 
-        LBCurrencyNameDataCommand newCurrency = nameDataCommands.stream()
-                .filter(currency -> currency.getCode().equals(code))
-                .findFirst()
-                .orElse(null);
-
-        if (newCurrency != null) {
-            currencyNameService.save(newCurrency);
-
-            log.info("Updated currency name list");
-        }
+        return Mono.empty();
     }
 
     @Scheduled(cron = "0 0 0 * * ?")
     @Override
-    public void addCurrencyRates() {
+    public Mono<Void> addCurrencyRates() {
         LocalDate localDate = LocalDate.now();
         String url = "/getFxRates?tp=LT&dt=" + localDate;
 
-        Flux<LBCurrencyRateCommand> currencyValues = webClient.get()
+        Flux<LBCurrencyRateDataCommand> currencyValues = webClient.get()
                 .uri(url)
                 .accept(MediaType.TEXT_XML)
                 .retrieve()
-                .bodyToFlux(LBCurrencyRateCommand.class);
+                .bodyToFlux(LBCurrencyRateDataCommand.class);
 
-        List<LBCurrencyValueCommand> valueCommands = getValueCommands(currencyValues);
-
-        for(int i = 0; i < valueCommands.size(); i++) {
-            try {
-                currencyRateService.save(valueCommands.get(i), localDate);
-            }
-            catch (ResourceNotFoundException ex) {
-                log.info(ex.getMessage());
-                addCurrencies(valueCommands.get(i).getCode());
-                i--;
-            }
-        }
-
-        setUpdatedAt();
+        currencyValues
+                .flatMap(value -> currencyRateService.save(value, localDate));
 
         log.info("Updated currency rates to " + localDate + " rates");
+
+//        List<LBCurrencyValueCommand> valueCommands = getValueCommands(currencyValues);
+//
+//        for(int i = 0; i < valueCommands.size(); i++) {
+//            try {
+//                currencyRateService.save(valueCommands.get(i), localDate);
+//            }
+//            catch (ResourceNotFoundException ex) {
+//                log.info(ex.getMessage());
+//                addCurrencies(valueCommands.get(i).getCode());
+//                i--;
+//            }
+//        }
+//
+//        setUpdatedAt();
+//
+
+        return Mono.empty();
 
     }
 

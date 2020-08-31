@@ -1,8 +1,10 @@
 package com.github.lithualien.currencyexchanger.services;
 
+import reactor.core.publisher.Mono;
+
 public interface LBService {
 
-    void addCurrencies(String code);
+    Mono<Void> addCurrencies(String code);
 
-    void addCurrencyRates();
+    Mono<Void> addCurrencyRates();
 }
